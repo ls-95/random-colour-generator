@@ -1,12 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./styles.css";
 
 export default function RandomColour() {
   const [typeOfColour, setTypeOfColour] = useState("hex");
-  const [colour, setColour] = useState("#000000");
+  const [baseColour, setBaseColour] = useState("#000000");
+
+  const displayColour =
+    typeOfColour === "rgb" ? hexToRgb(baseColour) : baseColour;
 
   function randomColourUtility(length) {
     return Math.floor(Math.random() * length);
+  }
+
+  function hexToRgb(hex) {
+    hex = hex.replace("#", "");
+
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
+  function rgbToHex(r, g, b) {
+    const toHex = (num) => num.toString(16).padStart(2, "0");
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
   }
 
   function handleCreateRandomHexColour() {
@@ -16,32 +34,25 @@ export default function RandomColour() {
     for (let i = 0; i < 6; i++) {
       hexColour += hex[randomColourUtility(hex.length)];
     }
-    console.log(hexColour);
-    setColour(hexColour);
+
+    setBaseColour(hexColour);
   }
 
   function handleCreateRandomRgbColour() {
     const r = randomColourUtility(256);
     const g = randomColourUtility(256);
     const b = randomColourUtility(256);
-    setColour(`rgb(${r}, ${g}, ${b})`);
-    console.log(r, g, b);
-  }
 
-  useEffect(() => {
-    if (typeOfColour === "rgb") {
-      handleCreateRandomRgbColour();
-    } else {
-      handleCreateRandomHexColour();
-    }
-  }, [typeOfColour]);
+    const hex = rgbToHex(r, g, b);
+    setBaseColour(hex); // still store it in HEX
+  }
 
   return (
     <div
       style={{
         width: "100ww",
         height: "100vh",
-        background: colour,
+        background: baseColour,
         textAlign: "center",
       }}
     >
@@ -68,7 +79,7 @@ export default function RandomColour() {
         }}
       >
         <h3>{typeOfColour === "rgb" ? "RGB Colour " : "Hex Colour "}</h3>
-        <h1>{colour}</h1>
+        <h1>{displayColour}</h1>
       </div>
     </div>
   );
