@@ -1,5 +1,5 @@
-import { type } from "@testing-library/user-event/dist/type";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import "./styles.css";
 
 export default function RandomColour() {
   const [typeOfColour, setTypeOfColour] = useState("hex");
@@ -20,7 +20,21 @@ export default function RandomColour() {
     setColour(hexColour);
   }
 
-  function handleCreateRandomRgbColour() {}
+  function handleCreateRandomRgbColour() {
+    const r = randomColourUtility(256);
+    const g = randomColourUtility(256);
+    const b = randomColourUtility(256);
+    setColour(`rgb(${r}, ${g}, ${b})`);
+    console.log(r, g, b);
+  }
+
+  useEffect(() => {
+    if (typeOfColour === "rgb") {
+      handleCreateRandomRgbColour();
+    } else {
+      handleCreateRandomHexColour();
+    }
+  }, [typeOfColour]);
 
   return (
     <div
@@ -28,6 +42,7 @@ export default function RandomColour() {
         width: "100ww",
         height: "100vh",
         background: colour,
+        textAlign: "center",
       }}
     >
       <button onClick={() => setTypeOfColour("hex")}>Create HEX colour</button>
@@ -41,6 +56,20 @@ export default function RandomColour() {
       >
         Generate Random Color
       </button>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          color: "#fff",
+          fontSize: "60px",
+          marginTop: "50px",
+        }}
+      >
+        <h3>{typeOfColour === "rgb" ? "RGB Colour " : "Hex Colour "}</h3>
+        <h1>{colour}</h1>
+      </div>
     </div>
   );
 }
